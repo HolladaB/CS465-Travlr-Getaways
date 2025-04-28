@@ -1,6 +1,26 @@
 const mongoose = require('mongoose');
 const Trip = require('../models/travlr'); // Register model
 const Model = mongoose.model('trips');
+const User = mongoose.model('users');
+
+const getUser = async (req, res, callback) => {
+    console.log("Decoded JWT Payload:", req.payLoad);
+  
+    if (!req.payLoad) {
+      return res.status(401).json({ "message": "No payload attached" });
+    }
+  
+    try {
+      const user = await User.findOne({ email: req.payLoad.email });
+  
+      if (!user) {
+        return res.status(404).json({ "message": "User not found" });
+      }
+      callback(req, res, user.name); 
+    } catch (err) {
+      return res.status(400).json(err);
+    }
+  };  
 
 // GET: /trips - lists all the trips
 // Regardless of outcome, response must include HTML status code
@@ -52,25 +72,32 @@ const tripsFindByCode = async(req, res) => {
 };
 
 const tripsAddTrip = async (req, res) => {
-    try {
-      const trip = await Model.create({
-        code: req.body.code,
-        name: req.body.name,
-        length: req.body.length,
-        start: req.body.start,
-        resort: req.body.resort,
-        perPerson: req.body.perPerson,
-        image: req.body.image,
-        description: req.body.description
-      });
+    console.log("Authorization header received:", req.headers.authorization);
+    console.log("Decoded payLoad received:", req.payLoad);
+
+    getUser(req, res, (req, res, userName) => {
+      Trip
+        .create({
+          code: req.body.code,
+          name: req.body.name,
+          length: req.body.length,
+          start: req.body.start,
+          resort: req.body.resort,
+          perPerson: req.body.perPerson,
+          image: req.body.image,
+          description: req.body.description,
+        })
   
       // Uncomment if you want to debug
       // console.log(trip);
   
-      return res.status(201).json(trip);
-    } catch (err) {
-      return res.status(400).json({ message: 'Failed to create trip', error: err.message });
-    }   
+      .then(trip => {
+        res.status(201).json(trip);
+      })
+      .catch(err => {
+        res.status(400).json(err);
+      });
+  });
 // Uncomment the following line to show results of operation
 // on the console
 // console.log(trip);
@@ -79,38 +106,47 @@ const tripsAddTrip = async (req, res) => {
 // PUT: /trips/:tripCode - Adds a new Trip
 // Regardless of outcome, response must include HTML status code
 // and JSON message to the requesting client
-const tripsUpdateTrip = async(req, res) => {
+const tripsUpdateTrip = async (req, res) => {
 
     // Uncomment for debugging
     console.log(req.params);
     console.log(req.body);
     
-    const q = await Model
-        .findOneAndUpdate(
-            {'code': req.params.tripCode },
+    getUser(req, res, (req, res, userName) => {
+        Trip
+          .findOneAndUpdate(
+            { 'code': req.params.tripCode },
             {
-                code: req.body.code,
-                name: req.body.name,
-                length: req.body.length,
-                start: req.body.start,
-                resort: req.body.resort,
-                perPerson: req.body.perPerson,
-                image: req.body.image,
-                description: req.body.description
+              code: req.body.code,
+              name: req.body.name,
+              length: req.body.length,
+              start: req.body.start,
+              resort: req.body.resort,
+              perPerson: req.body.perPerson,
+              image: req.body.image,
+              description: req.body.description
+            },
+            { new: true }
+          )
+          .then(trip => {
+            if (!trip) {
+              return res
+                .status(404)
+                .send({ message: "Trip not found with code " + req.params.tripCode });
             }
-        )
-        .exec();
-
-        if(!q)
-        { // Database returned no data
+            res.status(200).json(trip);
+          })
+          .catch(err => {
+            if (err.kind === 'ObjectId') {
+              return res
+                .status(404)
+                .send({ message: "Trip not found with code " + req.params.tripCode });
+            }
             return res
-                .status(400)
-                .json(err);
-        } else { // Return resulting updated trip
-            return res
-                .status(201)
-                .json(q);
-        }
+              .status(500)
+              .json(err);
+          });
+    });
 
     // Uncomment the following line to show results of operation
     // on the console
