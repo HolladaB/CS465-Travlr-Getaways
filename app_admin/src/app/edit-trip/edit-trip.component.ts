@@ -86,6 +86,21 @@ export class EditTripComponent implements OnInit {
     }
   }
 
+  public onDelete(): void {
+    const code = localStorage.getItem('tripCode');
+    if (!code || !window.confirm(`Delete trip ${code}? This cannot be undone.`)) return;
+
+    this.tripDataService.deleteTrip(code).subscribe({
+      next: () => {
+        localStorage.removeItem('tripCode');
+        this.router.navigate(['/list-trips']);
+      },
+      error: () => {
+        this.message = 'Unable to delete this trip. Please try again.';
+      }
+    });
+  }
+
   // h. Form field accessor
   get f() {
     return this.editForm.controls;
