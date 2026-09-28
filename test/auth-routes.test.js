@@ -61,3 +61,22 @@ test('authenticated deletion removes the selected trip and reports missing trips
     Trip.findOneAndDelete = originalDelete;
   }
 });
+
+
+test('new and existing password hashes remain verifiable', () => {
+  const crypto = require('node:crypto');
+  const User = require('mongoose').model('users');
+  const current = new User({ email: 'new@example.test', name: 'New' });
+  current.setPassword('strong-example-password');
+  assert.equal(current.iterations, 210000);
+  assert.equal(current.validPassword('strong-example-password'), true);
+  assert.equal(current.validPassword('incorrect'), false);
+
+  const salt = '0123456789abcdef0123456789abcdef';
+  const legacy = new User({
+    email: 'old@example.test', name: 'Old', salt,
+    hash: crypto.pbkdf2Sync('legacy-password', salt, 1000, 64, 'sha512').toString('hex')
+  });
+  assert.equal(legacy.validPassword('legacy-password'), true);
+  assert.equal(legacy.validPassword('incorrect'), false);
+});
