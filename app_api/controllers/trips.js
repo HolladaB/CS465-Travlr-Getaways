@@ -4,7 +4,6 @@ const Model = mongoose.model('trips');
 const User = mongoose.model('users');
 
 const getUser = async (req, res, callback) => {
-    console.log("Decoded JWT Payload:", req.payLoad);
   
     if (!req.payLoad) {
       return res.status(401).json({ "message": "No payload attached" });
@@ -72,8 +71,6 @@ const tripsFindByCode = async(req, res) => {
 };
 
 const tripsAddTrip = async (req, res) => {
-    console.log("Authorization header received:", req.headers.authorization);
-    console.log("Decoded payLoad received:", req.payLoad);
 
     getUser(req, res, (req, res, userName) => {
       Trip
@@ -109,8 +106,6 @@ const tripsAddTrip = async (req, res) => {
 const tripsUpdateTrip = async (req, res) => {
 
     // Uncomment for debugging
-    console.log(req.params);
-    console.log(req.body);
     
     getUser(req, res, (req, res, userName) => {
         Trip
@@ -151,12 +146,34 @@ const tripsUpdateTrip = async (req, res) => {
     // Uncomment the following line to show results of operation
     // on the console
     // console.log(q);
-}; 
+};
+
+const tripsDeleteTrip = async (req, res) => {
+    if (!req.payLoad) {
+        return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    try {
+        const user = await User.findOne({ email: req.payLoad.email });
+        if (!user) {
+            return res.status(401).json({ message: 'Account not found' });
+        }
+
+        const trip = await Trip.findOneAndDelete({ code: req.params.tripCode });
+        if (!trip) {
+            return res.status(404).json({ message: 'Trip not found' });
+        }
+        return res.status(204).send();
+    } catch (err) {
+        return res.status(500).json({ message: 'Unable to delete trip' });
+    }
+};
 
 module.exports = {
     tripsList,
     tripsFindByCode,
     tripsAddTrip,
     tripsUpdateTrip,
+    tripsDeleteTrip,
     
 };
