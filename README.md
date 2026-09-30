@@ -37,6 +37,16 @@ The updates on the project-improvements branch include:
 - Updated debug logs for security.
 - Added automated API tests and a GitHub Actions workflow as practice with testing and continuous integration.
 
+## Application Screenshots
+
+**Trip listing:** Admin page showing sample trips and the Add Trip and Edit Trip controls.
+
+![Admin trip listing](docs/screenshots/trip-listing.png)
+
+**Edit trip:** Form for updating trip details, with Save and Delete Trip controls.
+
+![Edit trip form](docs/screenshots/edit-trip.png)
+
 ## Running the Application
 
 The application requires Node.js, npm, and MongoDB. MongoDB can run locally or through Atlas. Two terminals are needed because Express and Angular run separately.
