@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const host = process.env.DB_HOST || '127.0.0.1';
-const dbURI = `mongodb://${host}/travlr`;
+const dbURI = process.env.MONGODB_URI || `mongodb://${host}/travlr`;
 const readLine = require('readline');
 // Build the connection string and set the connection timeout.
 // timeout is in milliseconds.
@@ -10,7 +10,7 @@ const connect = () => {
 }
 // Monitor connection events
 mongoose.connection.on('connected', () => {
-    console.log(`Mongoose connected to ${dbURI}`);
+    console.log('Mongoose connected');
 });
 mongoose.connection.on('error', err => {
     console.log('Mongoose connection error: ', err);
@@ -51,7 +51,7 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 // Make initial connection to DB
-connect();
+if (process.env.NODE_ENV !== 'test') connect();
 // Import Mongoose schema
 require('./travlr');
 require('./user');
