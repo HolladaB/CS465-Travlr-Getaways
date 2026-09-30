@@ -1,65 +1,96 @@
-# Travlr | Full-stack travel catalog
+# Travlr Getaways
 
-Travlr is a travel catalog with a server-rendered public site and a separate Angular administration interface. Express exposes trip data through a REST API; MongoDB stores trips and administrator accounts. Signed-in administrators can add, edit, and delete trips.
+Travlr Getaways is a full-stack travel application with a customer website and an Angular administration page. Express provides the API, and MongoDB stores the trip and account information. Authenticated users can add, edit, and delete trips.
 
-> Portfolio update of an SNHU full-stack course project. The original `final` branch is preserved. This branch adds a secure local account setup, completes deletion, and documents reproducible setup.
+This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final branch. The project-improvements branch includes additional functionality, security improvements, testing, and setup instructions.
 
-## What it does
+## Technologies
 
-- Public travel pages rendered with Express and Handlebars.
-- Angular trip listing and forms for authenticated editing.
-- Express API with public reads and JWT-protected create, update, and delete.
-- Sample trip data for local development.
+| Area | Tools |
+|---|---|
+| Customer website | Express, Handlebars, HTML, CSS, JavaScript |
+| Administration page | Angular, TypeScript, Bootstrap |
+| Backend | Node.js, Express |
+| Database | MongoDB, Mongoose |
+| Authentication | Passport, password hashing, JWT |
+| Testing | Postman, Node.js test runner, GitHub Actions |
 
-## Technology
+## Original Development
 
-| Layer | Tools |
-| --- | --- |
-| Public site and API | Node.js, Express, Handlebars |
-| Administration | Angular 19, TypeScript |
-| Data | MongoDB, Mongoose |
-| Login | Passport local strategy, password hashing, JWT |
-| Checks | Node test runner, Angular build, GitHub Actions |
+The customer website uses Express and Handlebars to render pages with trip information. The Angular administration page uses a component-based structure, with reusable trip cards and forms for adding and editing trips. Both parts of the application retrieve trip information through the Express API.
 
-## Run locally
+During development, I used Postman to test POST and PUT requests. I checked MongoDB to ensure that the information was added and updated in the database. Some issues occurred with CORS configuration and images not loading. These were resolved by adjusting the middleware placement and updating the asset configuration in angular.json.
 
-Prerequisites: Node.js 22 or 24, npm, and a local MongoDB server listening on `127.0.0.1:27017`. The MongoDB server is a separate installation and must be running before seeding or using database features. Two terminals are needed for the API and Angular administration page.
+The original course screenshots show the development of the trip listing, Add Trip form, and Edit Trip form.
 
-1. Clone this repository and check out `portfolio-cleanup` while reviewing this branch.
-2. In the repository root, run `npm ci`.
-3. Copy `.env.example` to `.env`. In PowerShell: `Copy-Item .env.example .env`.
-4. Fill in `JWT_SECRET` in `.env` with a unique random value of at least 32 characters. You can generate one with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`. Do not commit `.env`.
-5. If needed, set `MONGODB_URI` for your own MongoDB server. The example points to a local database.
-6. Run `npm run seed` to add the sample trips **only to an empty trips collection**. It refuses to replace existing trips.
-7. Set `ADMIN_NAME`, `ADMIN_EMAIL`, and a unique `ADMIN_PASSWORD` of at least 12 characters in `.env`. Run `npm run create-admin` once. It refuses a duplicate email. The password stays on your machine.
-8. Run `npm start` to start Express on `http://localhost:3000`. The public travel catalog is at `/travel`.
-9. In a second terminal, run `cd app_admin`, `npm ci`, then `npm start`. Open `http://localhost:4200` and log in with the account from step 7.
+## Project Improvements
 
-If you see `JWT_SECRET must be set`, check that `.env` exists in the repository root and contains a generated secret. If trip pages do not load, confirm MongoDB is running and that `MONGODB_URI` is correct. Do not run the seed command against data you want to keep.
+The updates on the project-improvements branch include:
 
-## API
+- Added a Delete Trip button, confirmation message, and API endpoint.
+- Fixed the Trips navigation link.
+- Replaced public registration with a local admin account creation command.
+- Strengthened password hashing while keeping existing accounts compatible.
+- Added a minimum length requirement for the JWT secret.
+- Added support for MongoDB Atlas through MONGODB_URI.
+- Changed database seeding to preserve existing trips.
+- Updated debug logs for security.
+- Added automated API tests and a GitHub Actions workflow as practice with testing and continuous integration.
 
-| Method | Route | Access | Result |
-| --- | --- | --- | --- |
-| GET | `/api/trips` | Public | List trips |
-| GET | `/api/trips/:tripCode` | Public | Retrieve matching trip |
-| POST | `/api/login` | Public | Get JWT with an existing local administrator account |
-| POST | `/api/trips` | JWT | Create trip |
-| PUT | `/api/trips/:tripCode` | JWT | Update trip |
-| DELETE | `/api/trips/:tripCode` | JWT | Delete trip; 204 on success, 404 if absent |
+## Running the Application
 
-There is no public signup endpoint. The `create-admin` script is the local bootstrap path. Accounts created in the older course version remain compatible with the password verifier.
+The application requires Node.js, npm, and MongoDB. MongoDB can run locally or through Atlas. Two terminals are needed because Express and Angular run separately.
 
-## Verification
+1. Download or clone the project-improvements branch. Open the main project folder in a terminal and type npm ci to install its packages.
+2. Copy .env.example and name the copy .env. Keep it in the main project folder beside package.json.
+3. Set MONGODB_URI to your database connection string. For local MongoDB, use `mongodb://127.0.0.1:27017/travlr` and ensure the database server is running. For Atlas, follow the connection steps below.
+4. Set JWT_SECRET to a randomly generated value of at least 32 characters. Keep this value private.
+5. Type npm run seed to add the three sample trips to an empty database. The command will stop if trips already exist.
+6. Fill in ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD in .env. The password must be at least 12 characters. Type npm run create-admin to create the account.
+7. Type npm start to start Express. Leave this terminal open.
+8. Open a second terminal in the main project folder. Type cd app_admin to enter the Angular folder, then npm ci to install its packages. After installation finishes, type npm start.
+9. Open `http://localhost:4200/login` and sign in with the admin account. Select Trips to view and manage the trip information. The customer travel page is at `http://localhost:3000/travel`.
 
-From the repository root, run `npm test`. These checks verify that unauthenticated edits fail, public signup is unavailable, and authenticated deletion handles found and missing trips. From `app_admin`, run `npm run build`.
+## Connecting with MongoDB Atlas
 
-The tests mock the database for deletion behavior; they do not replace a full MongoDB integration test. After starting MongoDB, manually verify: public trips load, an administrator logs in, and a sample trip can be created, edited, and deleted. A GitHub Actions workflow runs the automated checks on push and pull request.
+Atlas allows the application to use MongoDB without installing a database server locally.
 
-## Design decisions and current limits
+1. Create or select a cluster in Atlas.
+2. Create a database user with read and write access to the travlr database. Add your current IP address to the IP access list.
+3. Select Connect for the cluster and choose Drivers, then Node.js. Copy the connection string into MONGODB_URI in .env.
+4. Replace the username and password placeholders with the database user’s information. Set the database name to travlr before the question mark in the connection string. Passwords containing reserved characters must be URL-encoded.
 
-- The original `final` branch is preserved for comparison. This branch changes only the presentation and the most important functionality/security gaps.
-- Registration is disabled as an API route because every account currently has editing access; this application does not implement multiple permission roles.
-- Trip data is seeded once into an empty collection rather than deleting existing records.
-- The Angular client assumes an API at `http://localhost:3000`; change its service configuration before deploying elsewhere.
-- Local MongoDB is required. A hosted demo and real database integration tests are possible future improvements.
+The Atlas database user connects the application to MongoDB. The admin account created during setup is used to log into the travel application. Keep .env out of GitHub because it contains your connection information and secret.
+
+## API Endpoints
+
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| GET | /api/trips | Retrieve all trips | Public |
+| GET | /api/trips/:tripCode | Retrieve one trip | Public |
+| POST | /api/login | Sign in and receive a JWT | Public |
+| POST | /api/trips | Add a trip | Authenticated |
+| PUT | /api/trips/:tripCode | Update a trip | Authenticated |
+| DELETE | /api/trips/:tripCode | Delete a trip | Authenticated |
+
+Public registration is disabled because all accounts currently have access to modify trips. Accounts are created using npm run create-admin.
+
+## Testing
+
+From the main project folder, type npm test.
+
+The automated tests check that unauthenticated trip changes are rejected, public registration is unavailable, deletion handles existing and missing trips, and both original and updated password hashes can be verified.
+
+To check that the Angular application builds, open a terminal in the app_admin folder and type npm run build.
+
+GitHub Actions runs the tests and Angular build for pull requests and pushes to the project-improvements branch.
+
+The deletion tests use mocked database operations. To check the full application, run it with MongoDB and use a temporary trip to test adding, editing, and deleting. Refresh the listing after each change to confirm that it was saved.
+
+## Current Limitations
+
+- All authenticated accounts have the same editing access. Separate permission roles are not implemented.
+- The Angular application connects to the API at `http://localhost:3000`.
+- Sample trip data contains placeholder descriptions. Editing a trip updates MongoDB, but does not change data/trips.json.
+- The application runs locally with either local MongoDB or Atlas. A publicly hosted demo is not included.
+- Automated database integration tests are a possible future improvement.
