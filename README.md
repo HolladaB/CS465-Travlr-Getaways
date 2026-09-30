@@ -2,7 +2,7 @@
 
 Travlr Getaways is a full-stack travel application with a customer website and an Angular administration page. Express provides the API, and MongoDB stores the trip and account information. Authenticated users can add, edit, and delete trips.
 
-This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final branch. The project-improvements branch includes additional functionality, security improvements, testing, and setup instructions.
+This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final-coursework branch. The project-improvements branch includes additional functionality, security improvements, testing, and setup instructions.
 
 ## Technologies
 
