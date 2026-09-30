@@ -93,7 +93,7 @@ The automated tests check that unauthenticated trip changes are rejected, public
 
 To check that the Angular application builds, open a terminal in the app_admin folder and type npm run build.
 
-GitHub Actions runs the tests and Angular build for pull requests and pushes to the project-improvements branch.
+GitHub Actions runs the tests and Angular build for pull requests and pushes to the final branch.
 
 The deletion tests use mocked database operations. To check the full application, run it with MongoDB and use a temporary trip to test adding, editing, and deleting. Refresh the listing after each change to confirm that it was saved.
 
