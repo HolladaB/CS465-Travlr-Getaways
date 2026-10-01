@@ -2,7 +2,7 @@
 
 Travlr Getaways is a full-stack travel application with a customer website and an Angular administration page. Express provides the API, and MongoDB stores the trip and account information. Authenticated users can add, edit, and delete trips.
 
-This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final-coursework branch. The project-improvements branch includes additional functionality, security improvements, testing, and setup instructions.
+This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final-coursework branch. The final branch includes additional functionality, security improvements, testing, and setup instructions.
 
 ## Technologies
 
@@ -25,7 +25,7 @@ The original course screenshots show the development of the trip listing, Add Tr
 
 ## Project Improvements
 
-The updates on the project-improvements branch include:
+The additional improvements include:
 
 - Added a Delete Trip button, confirmation message, and API endpoint.
 - Fixed the Trips navigation link.
@@ -51,7 +51,7 @@ The updates on the project-improvements branch include:
 
 The application requires Node.js, npm, and MongoDB. MongoDB can run locally or through Atlas. Two terminals are needed because Express and Angular run separately.
 
-1. Download or clone the project-improvements branch. Open the main project folder in a terminal and type npm ci to install its packages.
+1. Download or clone the final branch. Open the main project folder in a terminal and type npm ci to install its packages.
 2. Copy .env.example and name the copy .env. Keep it in the main project folder beside package.json.
 3. Set MONGODB_URI to your database connection string. For local MongoDB, use `mongodb://127.0.0.1:27017/travlr` and ensure the database server is running. For Atlas, follow the connection steps below.
 4. Set JWT_SECRET to a randomly generated value of at least 32 characters. Keep this value private.
