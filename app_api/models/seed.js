@@ -1,20 +1,21 @@
-// Bring in the DB connection and the Trip schema
-const Mongoose = require('./db');
+require('dotenv').config();
+const mongoose = require('mongoose');
 const Trip = require('./travlr');
+const trips = require('../../data/trips.json');
+const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/travlr';
 
-// Read seed data from json file
-var fs = require('fs');
-var trips = JSON.parse(fs.readFileSync('./data/trips.json','utf8'));
-
-// delete any existing recors, then inset seed data
-const seedDB = async () => {
-    await Trip.deleteMany({});
+(async () => {
+  try {
+    await mongoose.connect(uri);
+    if (await Trip.countDocuments() > 0) {
+      throw new Error('Trips already exist; refusing to replace existing data');
+    }
     await Trip.insertMany(trips);
-    
-};
-
-// Close the MongoDB connection and exit
-seedDB().then(async () => {
-    await Mongoose.connection.close();
-    process.exit(0);
-});
+    console.log(`Added ${trips.length} sample trips`);
+  } catch (error) {
+    console.error('Unable to seed trips:', error.message);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.disconnect();
+  }
+})();

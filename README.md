@@ -1,13 +1,106 @@
-# CS465
-<hr>1. Compare and contrast the types of frontend development you used in your full stack project, including Express HTML, JavaScript, and the single-page application (SPA).<br>
-In this full-stack development, several types of frontend development were used for the different areas. In for the customer facing webpage, server rendered HTML website. The pages were loaded with express and handlesbars, which allowed the webpages to be created by the server and sent to browser. As the customer needs evolved, a admin page was create using SPA through Angular. This allowed for seamless navigation and component-based UI elements. These components could be reused, adjusted, and scaled to fit different needs. Utilizing RESTful API calls, the mongoDB was co0mmunicated with the adjust the user functions. This added a level of security with trips only being added or edited by authenticated users. 
-<hr>2. Why did the backend use a NoSQL MongoDB database?.<br>
-The project utilized NoSQL because it is flexibly. It is well suited for a dynamic data model, which was needed to by the admins to make adjustments to the webpage. The use of NoSQL allowed for Node/Express to be used, which was also a benefit. The schema-less design allowed for varying attributes. Overall, it allowed for the project to have a cohesive look with functions that helped complete the task. 
-<hr>3. How is JSON different from JavaScript and how does JSON tie together the frontend and backend development pieces?<br>
-JSON is a data format that is used to hold data. It does not have functions to make it an executable code. JavaScript is a programming language that can be used to create logic and interactions. The two make a connection between the frontend and backend. Angular utilized JSON in request that are send to express. Express parses the JSON and utilizes it in JavaScript objects to create interactions and modifications in the web application. 
-<hr>4. Provide instances in the full stack process when you refactored code to improve functionality and efficiencies and name the benefits that come from reusable user interface (UI) components.<br>
-Some of the main instances of refactoring occurred with the tripDataServices. Originally trips were handled in each component by moved to make API calls. This makes it easier to maintain and change. The TripcardComponent was made to be able to reuse the trip data everywhere instead of having to copy the HTML. This reduced the amount of duplicate code and made it easier to create an understandable webpage across the application. 
-<hr>5. Methods for request and retrieval necessitate various types of API testing of endpoints, in addition to the difficulties of testing with added layers of security. Explain your understanding of methods, endpoints, and security in a full stack application.<br>
-To test the application, postman was used. Postman allows for testing of the GET, POST, PUT, and DELETE interactions. It also allowed for testing authentication by pulling security tokens and applying them to future uses. Breaking down the testing further, methods are the HTTP request mentions earlier. These are used to navigate through different endpoints. Endpoints are specific URL pages that are used for navigation. Security is ensuring that pages and information, endpoints, are protected behind an authentication. This authentication uses each person’s token to ensure they are able to access the different endpoints. 
-<hr>6. How has this course helped you in reaching your professional goals? What skills have you learned, developed, or mastered in this course to help you become a more marketable candidate in your career field?<br>
-I think this course has helped beyond just the direct and specific information that we learned about MEAN. It has taught me a lot about planning. This was through having to understand the future goals and what resources will be needed. It also helped me with troubleshooting. Simple mistakes can make huge differences in applications. The larger the scale the more difficult issues can be to find. This helped me to break down problems into small pieces and focus on one problem at a time. It seemed like a daunting task when looking at the multiple errors but starting with the first and continuing through them helped me to see that the problems are solvable.
+# Travlr Getaways
+
+Travlr Getaways is a full-stack travel application with a customer website and an Angular administration page. Express provides the API, and MongoDB stores the trip and account information. Authenticated users can add, edit, and delete trips.
+
+This project was developed for SNHU’s CS 465 Full Stack Development course using the supplied Travlr website and course guide. The original submission is preserved on the final-coursework branch. The project-improvements branch includes additional functionality, security improvements, testing, and setup instructions.
+
+## Technologies
+
+| Area | Tools |
+|---|---|
+| Customer website | Express, Handlebars, HTML, CSS, JavaScript |
+| Administration page | Angular, TypeScript, Bootstrap |
+| Backend | Node.js, Express |
+| Database | MongoDB, Mongoose |
+| Authentication | Passport, password hashing, JWT |
+| Testing | Postman, Node.js test runner, GitHub Actions |
+
+## Original Development
+
+The customer website uses Express and Handlebars to render pages with trip information. The Angular administration page uses a component-based structure, with reusable trip cards and forms for adding and editing trips. Both parts of the application retrieve trip information through the Express API.
+
+During development, I used Postman to test POST and PUT requests. I checked MongoDB to ensure that the information was added and updated in the database. Some issues occurred with CORS configuration and images not loading. These were resolved by adjusting the middleware placement and updating the asset configuration in angular.json.
+
+The original course screenshots show the development of the trip listing, Add Trip form, and Edit Trip form.
+
+## Project Improvements
+
+The updates on the project-improvements branch include:
+
+- Added a Delete Trip button, confirmation message, and API endpoint.
+- Fixed the Trips navigation link.
+- Replaced public registration with a local admin account creation command.
+- Strengthened password hashing while keeping existing accounts compatible.
+- Added a minimum length requirement for the JWT secret.
+- Added support for MongoDB Atlas through MONGODB_URI.
+- Changed database seeding to preserve existing trips.
+- Updated debug logs for security.
+- Added automated API tests and a GitHub Actions workflow as practice with testing and continuous integration.
+
+## Application Screenshots
+
+**Trip listing:** Admin page showing sample trips and the Add Trip and Edit Trip controls.
+
+![Admin trip listing](docs/screenshots/trip-listing.png)
+
+**Edit trip:** Form for updating trip details, with Save and Delete Trip controls.
+
+![Edit trip form](docs/screenshots/edit-trip.png)
+
+## Running the Application
+
+The application requires Node.js, npm, and MongoDB. MongoDB can run locally or through Atlas. Two terminals are needed because Express and Angular run separately.
+
+1. Download or clone the project-improvements branch. Open the main project folder in a terminal and type npm ci to install its packages.
+2. Copy .env.example and name the copy .env. Keep it in the main project folder beside package.json.
+3. Set MONGODB_URI to your database connection string. For local MongoDB, use `mongodb://127.0.0.1:27017/travlr` and ensure the database server is running. For Atlas, follow the connection steps below.
+4. Set JWT_SECRET to a randomly generated value of at least 32 characters. Keep this value private.
+5. Type npm run seed to add the three sample trips to an empty database. The command will stop if trips already exist.
+6. Fill in ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD in .env. The password must be at least 12 characters. Type npm run create-admin to create the account.
+7. Type npm start to start Express. Leave this terminal open.
+8. Open a second terminal in the main project folder. Type cd app_admin to enter the Angular folder, then npm ci to install its packages. After installation finishes, type npm start.
+9. Open `http://localhost:4200/login` and sign in with the admin account. Select Trips to view and manage the trip information. The customer travel page is at `http://localhost:3000/travel`.
+
+## Connecting with MongoDB Atlas
+
+Atlas allows the application to use MongoDB without installing a database server locally.
+
+1. Create or select a cluster in Atlas.
+2. Create a database user with read and write access to the travlr database. Add your current IP address to the IP access list.
+3. Select Connect for the cluster and choose Drivers, then Node.js. Copy the connection string into MONGODB_URI in .env.
+4. Replace the username and password placeholders with the database user’s information. Set the database name to travlr before the question mark in the connection string. Passwords containing reserved characters must be URL-encoded.
+
+The Atlas database user connects the application to MongoDB. The admin account created during setup is used to log into the travel application. Keep .env out of GitHub because it contains your connection information and secret.
+
+## API Endpoints
+
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| GET | /api/trips | Retrieve all trips | Public |
+| GET | /api/trips/:tripCode | Retrieve one trip | Public |
+| POST | /api/login | Sign in and receive a JWT | Public |
+| POST | /api/trips | Add a trip | Authenticated |
+| PUT | /api/trips/:tripCode | Update a trip | Authenticated |
+| DELETE | /api/trips/:tripCode | Delete a trip | Authenticated |
+
+Public registration is disabled because all accounts currently have access to modify trips. Accounts are created using npm run create-admin.
+
+## Testing
+
+From the main project folder, type npm test.
+
+The automated tests check that unauthenticated trip changes are rejected, public registration is unavailable, deletion handles existing and missing trips, and both original and updated password hashes can be verified.
+
+To check that the Angular application builds, open a terminal in the app_admin folder and type npm run build.
+
+GitHub Actions runs the tests and Angular build for pull requests and pushes to the final branch.
+
+The deletion tests use mocked database operations. To check the full application, run it with MongoDB and use a temporary trip to test adding, editing, and deleting. Refresh the listing after each change to confirm that it was saved.
+
+## Current Limitations
+
+- All authenticated accounts have the same editing access. Separate permission roles are not implemented.
+- The Angular application connects to the API at `http://localhost:3000`.
+- Sample trip data contains placeholder descriptions. Editing a trip updates MongoDB, but does not change data/trips.json.
+- The application runs locally with either local MongoDB or Atlas. A publicly hosted demo is not included.
+- Automated database integration tests are a possible future improvement.

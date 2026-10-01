@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "node --test",
+    "create-admin": "node scripts/create-admin.js",
+    "seed": "node app_api/models/seed.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
